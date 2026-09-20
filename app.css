@@ -3829,3 +3829,126 @@
 
     .entry.hold-pending { outline: 2px dashed #f59e0b !important; outline-offset:2px; opacity:0.8; }
     .entry.hold-ready { outline: 3px solid #10b981 !important; outline-offset:2px; box-shadow:0 0 0 4px rgba(16,185,129,0.3) !important; transform:scale(1.02); }
+
+
+/* ===== Organized multi-page navigation ===== */
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+.app-nav-sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: #ffffff;
+  padding: 8px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid #e0e7ff;
+  align-items: center;
+}
+.app-nav-section {
+  flex: 1 1 auto;
+  min-width: 110px;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--muted);
+  border: 1px solid transparent;
+  background: #f8fafc;
+  transition: all 0.15s ease;
+}
+.app-nav-section:hover {
+  background: #eef2ff;
+  color: var(--primary);
+  border-color: #c7d2fe;
+}
+.app-nav-section.active {
+  background: linear-gradient(180deg, #6366f1 0%, var(--primary) 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+.app-nav-section .sec-desc {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+.app-nav-section.active .sec-desc { opacity: 0.9; }
+
+.app-nav-sub {
+  display: none;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: #ffffff;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  border: 1px solid #e2e8f0;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+.app-nav-sub.is-visible { display: flex; }
+.app-nav-sub .view-tab {
+  flex: 1 1 auto;
+  text-align: center;
+  text-decoration: none;
+}
+.app-nav-sub .view-controls {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+.app-nav-sub #saveBtnTop {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 768px) {
+  .app-nav-section {
+    min-width: calc(33.33% - 8px);
+    padding: 8px 6px;
+    font-size: 0.72rem;
+  }
+  .app-nav-section .sec-desc { display: none; }
+  .app-nav-sub .view-tab {
+    font-size: 0.7rem;
+    padding: 8px 8px;
+    min-height: 38px;
+  }
+}
+
+
+/* Dialog always on top of sticky nav / setup strip */
+.modal-overlay {
+  z-index: 100000 !important;
+  position: fixed !important;
+  inset: 0 !important;
+}
+.modal-overlay.open {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+body.modal-open {
+  overflow: hidden !important;
+}
+.combo-portal-list {
+  z-index: 100050 !important;
+}
+/* Setup sections: keep folded look clear */
+.sidebar .collapsible-card.collapsed {
+  cursor: pointer;
+}
+.sidebar .collapsible-card:not(.collapsed) {
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.12);
+  border-color: #c7d2fe;
+}

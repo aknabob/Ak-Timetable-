@@ -688,9 +688,12 @@ const COLORS = [
     function toggleSidebarCard(cardId) {
       const card = document.getElementById(cardId);
       if (!card) return;
-      const next = !card.classList.contains('collapsed');
-      // Accordion-style: opening one can leave others open; click-outside collapses all
-      setSidebarCardCollapsed(cardId, next);
+      const willCollapse = !card.classList.contains('collapsed');
+      // Accordion: only one setup section open at a time
+      if (!willCollapse) {
+        collapseExpandedSidebarCards(card);
+      }
+      setSidebarCardCollapsed(cardId, willCollapse);
     }
 
     function collapseExpandedSidebarCards(exceptCard) {
@@ -2165,6 +2168,7 @@ function switchView(view) {
         document.getElementById('slotEnd').value = '';
         document.getElementById('slotIsBreak').checked = !!forceBreak;
       }
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
       document.getElementById('slotModal').classList.add('open');
       document.getElementById('slotLabel').focus();
     }
@@ -2268,6 +2272,7 @@ function switchView(view) {
       state.editingClassId = id || null;
       document.getElementById('classModalTitle').textContent = id ? 'Edit Class' : 'Add Class';
       document.getElementById('classNameInput').value = id ? state.classes.find(x => x.id === id).name : '';
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
       document.getElementById('classModal').classList.add('open');
       document.getElementById('classNameInput').focus();
     }
@@ -2617,6 +2622,7 @@ function switchView(view) {
         selectColor(COLORS[state.subjects.length % COLORS.length]);
         renderWeeklyByClassInputs({});
       }
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
       document.getElementById('subjectModal').classList.add('open');
       document.getElementById('subjName').focus();
     }
@@ -3979,7 +3985,17 @@ function switchView(view) {
       }
     }
 
-    function openAssignModal(day, slotId, preselectClassId, forceTeacherCtx, focusedSubjectId, focusedClassId) {
+        function prepareModalOpen() {
+      // Fold all setup sections so the dialog is clear
+      if (typeof collapseAllSidebarCards === 'function') collapseAllSidebarCards();
+      document.body.classList.add('modal-open');
+      try { if (typeof closeMobileSidebar === 'function') closeMobileSidebar(); } catch (e) {}
+    }
+    function prepareModalClose() {
+      document.body.classList.remove('modal-open');
+    }
+
+function openAssignModal(day, slotId, preselectClassId, forceTeacherCtx, focusedSubjectId, focusedClassId) {
       if (focusedSubjectId && focusedClassId) { window._lastClickedSubjectId = focusedSubjectId; window._lastClickedClassId = focusedClassId; } else { const chk = (typeof getAssignmentsForSlot === 'function') ? getAssignmentsForSlot(day, slotId) : []; if (chk.length === 0) { window._lastClickedSubjectId = null; window._lastClickedClassId = null; } }
 
       if (state.currentView !== 'school' && state.currentView !== 'teacher' && state.currentView !== 'compare' && state.currentView !== 'class') return;
@@ -4043,7 +4059,8 @@ function switchView(view) {
       checkSameDayWarning();
       updateTopSubjectPlacements();
       const _assignOverlay = document.getElementById('assignModal');
-      _assignOverlay.classList.add('open');
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
+      if (_assignOverlay) _assignOverlay.classList.add('open');
 
       // ONLY auto-scroll to bottom on open - do NOT open class/subject dropdowns
       setTimeout(() => {
@@ -4444,6 +4461,7 @@ function switchView(view) {
       _btns.forEach(b => { b.style.background = ''; b.textContent = '+ Add to this slot'; });
 
       document.getElementById('assignModal').classList.remove('open');
+      if (typeof prepareModalClose === 'function') prepareModalClose();
       state.currentSlot = null;
       if (window._assignClassPortal) {
         window._assignClassPortal.remove();
@@ -7191,6 +7209,7 @@ function switchView(view) {
       if (!state.slots.filter(s => !s.isBreak).length) { showToast('Add teaching periods first'); return; }
       ensureAutoGenRules();
       renderAutoGenRulesUI();
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
       document.getElementById('autoGenModal').classList.add('open');
     }
 
@@ -8819,6 +8838,7 @@ function switchView(view) {
           return '<div class="color-swatch' + (c === color ? ' selected' : '') + '" style="background:' + c + '" data-color="' + c + '" onclick=\"selectStudyColor(\'' + c + '\')\"></div>';
         }).join('');
       }
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
       document.getElementById('studySubjectModal').classList.add('open');
       try { document.getElementById('studySubjName').focus(); } catch (e) {}
     }
@@ -8902,12 +8922,14 @@ function switchView(view) {
       } else {
         host.innerHTML = '';
       }
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
       document.getElementById('studyAssignModal').classList.add('open');
     }
 
     function closeStudyAssignModal() {
       const m = document.getElementById('studyAssignModal');
       if (m) m.classList.remove('open');
+      if (typeof prepareModalClose === 'function') prepareModalClose();
       state.currentStudySlot = null;
     }
 
@@ -9212,6 +9234,7 @@ function switchView(view) {
 
       renderExamExisting();
       checkExamClashPreview();
+      if (typeof prepareModalOpen === 'function') prepareModalOpen();
       document.getElementById('examModal').classList.add('open');
     }
 
@@ -9381,6 +9404,7 @@ function switchView(view) {
 
     function closeExamModal() {
       document.getElementById('examModal').classList.remove('open');
+      if (typeof prepareModalClose === 'function') prepareModalClose();
       state.currentExamSlot = null;
     }
 

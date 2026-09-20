@@ -241,19 +241,35 @@
         </div>
     </aside>
 
-    <div class="view-tabs no-print" data-app-page="exam">
-      <a class="view-tab" id="nav-school" href="index.html" data-nav="school"><span class="tab-long">🏫 School General</span><span class="tab-short">🏫 School</span></a>
-      <a class="view-tab" id="nav-class" href="index.html#class" data-nav="class"><span class="tab-long">🎓 Class Timetable</span><span class="tab-short">🎓 Class</span></a>
-      <a class="view-tab" id="nav-teacher" href="index.html#teacher" data-nav="teacher"><span class="tab-long">👤 Teacher Timetable</span><span class="tab-short">👤 Teacher</span></a>
-      <a class="view-tab" id="nav-compare" href="index.html#compare" data-nav="compare"><span class="tab-long">🔀 Side by Side</span><span class="tab-short">🔀 Compare</span></a>
-      <a class="view-tab" id="nav-exam" href="exam.html" data-nav="exam"><span class="tab-long">📝 Exam / CA</span><span class="tab-short">📝 Exam</span></a>
-      <span class="view-tab-sep" aria-hidden="true"></span>
-      <a class="view-tab" id="nav-study" href="study.html" data-nav="study"><span class="tab-long">📖 Reading</span><span class="tab-short">📖 Reading</span></a>
-      <button class="btn btn-primary btn-sm" id="saveBtnTop" onclick="saveTimetableNow()" style="padding:4px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;background:#16a34a;border:1px solid #15803d;color:white;box-shadow:0 1px 3px rgba(22,163,74,0.25);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">
-        💾 Save
-      </button>
-      <div class="view-controls" id="viewControls"></div>
-    </div>
+    
+    <nav class="app-nav no-print" aria-label="Main">
+      <div class="app-nav-sections">
+        <a class="app-nav-section" id="sec-school" href="index.html" data-section="school">
+          🏫 School
+          <span class="sec-desc">General · Class · Teacher</span>
+        </a>
+        <a class="app-nav-section" id="sec-exam" href="exam.html" data-section="exam">
+          📝 Exam / CA
+          <span class="sec-desc">Papers · Invigilators</span>
+        </a>
+        <a class="app-nav-section" id="sec-study" href="study.html" data-section="study">
+          📖 Reading
+          <span class="sec-desc">Personal study plan</span>
+        </a>
+        <button type="button" class="btn btn-primary btn-sm" id="saveBtnNav" onclick="saveTimetableNow()" title="Save" style="padding:8px 12px;border-radius:10px;font-weight:700;background:#16a34a;border:1px solid #15803d;color:#fff;flex:0 0 auto;">💾 Save</button>
+      </div>
+      <div class="app-nav-sub view-tabs" id="schoolSubNav" data-app-page="exam">
+        <a class="view-tab" id="nav-school" href="index.html" data-nav="school"><span class="tab-long">🏫 School General</span><span class="tab-short">🏫 General</span></a>
+        <a class="view-tab" id="nav-class" href="index.html#class" data-nav="class"><span class="tab-long">🎓 Class</span><span class="tab-short">🎓 Class</span></a>
+        <a class="view-tab" id="nav-teacher" href="index.html#teacher" data-nav="teacher"><span class="tab-long">👤 Teacher</span><span class="tab-short">👤 Teacher</span></a>
+        <a class="view-tab" id="nav-compare" href="index.html#compare" data-nav="compare"><span class="tab-long">🔀 Side by Side</span><span class="tab-short">🔀 Compare</span></a>
+        <button type="button" class="btn btn-primary btn-sm" id="saveBtnTop" onclick="saveTimetableNow()" style="padding:4px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;background:#16a34a;border:1px solid #15803d;color:white;box-shadow:0 1px 3px rgba(22,163,74,0.25);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">
+          💾 Save
+        </button>
+        <div class="view-controls" id="viewControls"></div>
+      </div>
+    </nav>
+
     <div class="layout">
       <main class="main-panel">
         <div class="toolbar">
@@ -11829,15 +11845,29 @@ function switchView(view) {
     </div>
   </div>
   <script src="js/app.js"></script>
-  <script>
+    <script>
     (function () {
       var page = document.body.getAttribute('data-app-page') || 'school';
       var def = document.body.getAttribute('data-default-view') || 'school';
+
+      function markSection() {
+        document.querySelectorAll('.app-nav-section').forEach(function (el) {
+          el.classList.toggle('active', el.getAttribute('data-section') === page);
+        });
+        var sub = document.getElementById('schoolSubNav');
+        if (sub) {
+          if (page === 'school') sub.classList.add('is-visible');
+          else sub.classList.remove('is-visible');
+        }
+      }
+
       function markNav(view) {
-        document.querySelectorAll('.view-tabs .view-tab[data-nav]').forEach(function (el) {
+        document.querySelectorAll('.app-nav-sub .view-tab[data-nav]').forEach(function (el) {
           el.classList.toggle('active', el.getAttribute('data-nav') === view);
         });
+        markSection();
       }
+
       function wirePagedSwitchView() {
         var _sv = window.switchView;
         if (typeof _sv !== 'function' || _sv._paged) return;
@@ -11853,8 +11883,11 @@ function switchView(view) {
         };
         window.switchView._paged = true;
       }
+
       function boot() {
         wirePagedSwitchView();
+        markSection();
+        if (typeof collapseAllSidebarCards === "function") collapseAllSidebarCards();
         var hash = (location.hash || '').replace(/^#/, '');
         var view = hash || def;
         if (page === 'exam') view = 'exam';
@@ -11864,7 +11897,7 @@ function switchView(view) {
         else if (typeof switchView === 'function') switchView(view);
         markNav(view);
       }
-      // app.js calls init() at parse time; run after it
+
       setTimeout(boot, 30);
       window.addEventListener('hashchange', function () {
         if (page !== 'school') return;
@@ -11874,5 +11907,6 @@ function switchView(view) {
       });
     })();
   </script>
+
 </body>
 </html>
