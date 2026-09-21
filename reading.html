@@ -19,7 +19,7 @@
   <meta name="apple-mobile-web-app-title" content="Akeem Timetable" />
 
 </head>
-<body data-page="exam">
+<body data-page="study">
   <div class="app">
     <header>
       <div>
@@ -246,9 +246,9 @@
       <button class="view-tab" data-view="class" onclick="goToPage('class')"><span class="tab-long">🎓 Class Timetable</span><span class="tab-short">🎓 Class</span></button>
       <button class="view-tab" data-view="teacher" onclick="goToPage('teacher')"><span class="tab-long">👤 Teacher Timetable</span><span class="tab-short">👤 Teacher</span></button>
       <button class="view-tab" data-view="compare" onclick="goToPage('compare')"><span class="tab-long">🔀 Side by Side</span><span class="tab-short">🔀 Compare</span></button>
-      <button class="view-tab active" data-view="exam" onclick="goToPage('exam')"><span class="tab-long">📝 Exam / CA</span><span class="tab-short">📝 Exam</span></button>
+      <button class="view-tab" data-view="exam" onclick="goToPage('exam')"><span class="tab-long">📝 Exam / CA</span><span class="tab-short">📝 Exam</span></button>
       <span class="view-tab-sep" aria-hidden="true" title="Personal"></span>
-      <button class="view-tab" data-view="study" onclick="goToPage('study')" title="Personal reading plan"><span class="tab-long">📖 Reading</span><span class="tab-short">📖 Reading</span></button>
+      <button class="view-tab active" data-view="study" onclick="goToPage('study')" title="Personal reading plan"><span class="tab-long">📖 Reading</span><span class="tab-short">📖 Reading</span></button>
       <button class="btn btn-primary btn-sm" id="saveBtnTop" onclick="saveTimetableNow()" style="padding:4px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;background:#16a34a;border:1px solid #15803d;color:white;box-shadow:0 1px 3px rgba(22,163,74,0.25);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">
         💾 Save
       </button>
